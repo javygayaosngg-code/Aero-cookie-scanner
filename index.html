@@ -1,0 +1,159 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cybeat Cookie Scanner</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ font-family:Arial,sans-serif;
+ background:#080d16;
+ color:white;
+}
+header{
+ padding:22px 18px;
+ background:#101722;
+ border-bottom:1px solid #292f3b;
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+}
+.logo{font-size:21px;font-weight:bold}
+.logo span{color:#ff263f}
+nav a{
+ color:#ddd;
+ text-decoration:none;
+ margin-left:14px;
+ font-size:13px;
+}
+.hero{
+ text-align:center;
+ padding:65px 20px 35px;
+ background:radial-gradient(ellipse at center,#30101c,#080d16 70%);
+}
+h1{font-size:36px;margin:0 0 15px}
+h1 span{color:#ff263f}
+.hero p{color:#aab3c2;line-height:1.6}
+.scanner{
+ max-width:520px;
+ margin:25px auto;
+ padding:22px;
+ background:#111a27;
+ border:1px solid #343b4b;
+ border-radius:16px;
+}
+input{
+ width:100%;
+ padding:15px;
+ border-radius:9px;
+ border:1px solid #414b5c;
+ background:#080d16;
+ color:white;
+ font-size:15px;
+}
+button{
+ width:100%;
+ padding:15px;
+ margin-top:12px;
+ border:0;
+ border-radius:9px;
+ background:#f32340;
+ color:white;
+ font-weight:bold;
+ font-size:16px;
+}
+.features{
+ padding:25px 18px 55px;
+ display:grid;
+ grid-template-columns:1fr;
+ gap:15px;
+ max-width:850px;
+ margin:auto;
+}
+.feature{
+ padding:23px;
+ background:#111a27;
+ border:1px solid #252e3c;
+ border-radius:13px;
+}
+.feature h3{margin-top:0}
+.feature p{color:#aab3c2;line-height:1.5}
+footer{
+ text-align:center;
+ padding:25px;
+ color:#8993a3;
+ border-top:1px solid #292f3b;
+ font-size:13px;
+}
+</style>
+</head>
+<body>
+
+<header>
+ <div class="logo">CYBEAT <span>⚡</span></div>
+ <nav>
+  <a href="#home">Home</a>
+  <a href="#scanner">Scanner</a>
+  <a href="#features">Features</a>
+ </nav>
+</header>
+
+<section class="hero" id="home">
+ <h1>Cookie <span>Scanner ⚡</span></h1>
+ <p>Powerful. Accurate. Secure.<br>
+ Website Cookie Security Scanner</p>
+
+ <div class="scanner" id="scanner">
+  <h2>Website Scanner</h2>
+  <p>Enter your website URL below.</p>
+  <input id="website" type="url"
+   placeholder="https://example.com">
+  <button onclick="scan()">START SCANNING</button>
+  <p id="message"></p>
+ </div>
+</section>
+
+<section class="features" id="features">
+ <div class="feature">
+  <h3>🛡️ Secure & Private</h3>
+  <p>Security-focused cookie analysis.</p>
+ </div>
+ <div class="feature">
+  <h3>📊 Accurate Results</h3>
+  <p>Review cookie security attributes.</p>
+ </div>
+ <div class="feature">
+  <h3>⚡ Powerful Scanner</h3>
+  <p>Designed for website security checks.</p>
+ </div>
+</section>
+
+<footer>
+ © 2026 Cybeat Cookie Scanner.
+ All rights reserved.
+</footer>
+
+<script>
+function scan(){
+ const url=document.getElementById("website").value;
+ const msg=document.getElementById("message");
+
+ try{
+  const parsed=new URL(url);
+  if(!["http:","https:"].includes(parsed.protocol)){
+   throw new Error();
+  }
+  msg.textContent="URL accepted. Scanner engine setup is the next step.";
+  msg.style.color="#ff5268";
+ }catch(e){
+  msg.textContent="Please enter a valid website URL.";
+  msg.style.color="#ff5268";
+ }
+}
+</script>
+
+</body>
+</html>
