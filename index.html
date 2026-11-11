@@ -225,6 +225,113 @@ db.auth.getSession().then(({data, error}) => {
   }
   updatePage(data.session);
 });
+  
+// AERO ADMIN DASHBOARD
+async function loadAeroAdmin(session) {
+  const dashboard = document.getElementById("dashboard");
+  if (!session || !dashboard) return;
+
+  const { data: isAdmin, error: adminError } =
+    await db.rpc("is_admin");
+
+  if (adminError || !isAdmin) return;
+
+  if (document.getElementById("aeroAdminPanel")) return;
+
+  const panel = document.createElement("section");
+  panel.id = "aeroAdminPanel";
+  panel.className = "card";
+  panel.style.marginTop = "25px";
+
+  panel.innerHTML = `
+    <h2 style="color:#f52245">AERO ADMIN PANEL</h2>
+    <p>Administrator Control Center</p>
+    <hr>
+    <h3>Registered Users</h3>
+    <div id="adminUsers">Loading users...</div>
+    <hr>
+    <h3>Memberships</h3>
+    <div id="adminMemberships">Loading memberships...</div>
+  `;
+
+  dashboard.appendChild(panel);
+
+  const usersBox = document.getElementById("adminUsers");
+  const membersBox = document.getElementById("adminMemberships");
+
+  const { data: profiles, error: profilesError } =
+    await db.from("profiles").select("id,display_name,created_at");
+
+  const { data: roles } =
+    await db.from("user_roles").select("user_id,role");
+
+  if (profilesError) {
+    usersBox.textContent = "Could not load users: " + profilesError.message;
+  } else if (!profiles || profiles.length === 0) {
+    usersBox.textContent = "No registered users found.";
+  } else {
+    usersBox.replaceChildren();
+
+    profiles.forEach(user => {
+      const role = roles?.find(r => r.user_id === user.id)?.role || "user";
+      const item = document.createElement("div");
+
+      item.style.cssText =
+        "padding:12px;margin:10px 0;background:#0b1421;border-radius:8px;overflow-wrap:anywhere";
+
+      const name = document.createElement("strong");
+      name.textContent = user.display_name || "Unnamed User";
+
+      const roleText = document.createElement("p");
+      roleText.textContent = "Role: " + role;
+
+      const idText = document.createElement("small");
+      idText.textContent = "User ID: " + user.id;
+
+      item.append(name, roleText, idText);
+      usersBox.appendChild(item);
+    });
+  }
+
+  const { data: memberships, error: membershipError } =
+    await db.from("memberships")
+      .select("user_id,plan,status,expires_at");
+
+  if (membershipError) {
+    membersBox.textContent = "Could not load memberships: " + membershipError.message;
+  } else if (!memberships || memberships.length === 0) {
+    membersBox.textContent = "No memberships yet.";
+  } else {
+    membersBox.replaceChildren();
+
+    memberships.forEach(member => {
+      const item = document.createElement("div");
+      item.style.cssText =
+        "padding:12px;margin:10px 0;background:#0b1421;border-radius:8px;overflow-wrap:anywhere";
+
+      item.textContent =
+        member.plan.toUpperCase() + " | " +
+        member.status.toUpperCase() + " | " +
+        member.user_id;
+
+      membersBox.appendChild(item);
+    });
+  }
+}
+
+// Check admin access after login
+db.auth.getSession().then(({ data }) => {
+  if (data.session) loadAeroAdmin(data.session);
+});
+
+db.auth.onAuthStateChange((event, session) => {
+  if (session) {
+    setTimeout(() => loadAeroAdmin(session), 0);
+  } else {
+    document.getElementById("aeroAdminPanel")?.remove();
+  }
+});
+
 </script>
 
 </body>
