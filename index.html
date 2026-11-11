@@ -288,8 +288,23 @@ async function loadAeroAdmin(session) {
       const idText = document.createElement("small");
       idText.textContent = "User ID: " + user.id;
 
-      item.append(name, roleText, idText);
-      usersBox.appendChild(item);
+      
+item.append(name, roleText, idText);
+
+const vipBtn = document.createElement("button");
+vipBtn.textContent = "ACTIVATE VIP - 30 DAYS";
+vipBtn.onclick = () =>
+  activateAeroMembership(user.id, "vip", 30);
+
+const eliteBtn = document.createElement("button");
+eliteBtn.textContent = "ACTIVATE ELITE - 30 DAYS";
+eliteBtn.style.background = "#7040b5";
+eliteBtn.onclick = () =>
+  activateAeroMembership(user.id, "elite", 30);
+
+item.append(vipBtn, eliteBtn);
+usersBox.appendChild(item);
+
     });
   }
 
@@ -331,6 +346,44 @@ db.auth.onAuthStateChange((event, session) => {
     document.getElementById("aeroAdminPanel")?.remove();
   }
 });
+  
+// AERO VIP / ELITE MEMBERSHIP ACTIVATION
+async function activateAeroMembership(userId, plan, days) {
+  const confirmed = confirm(
+    "Activate " + plan.toUpperCase() +
+    " membership for " + days + " days?"
+  );
+
+  if (!confirmed) return;
+
+  const start = new Date();
+  const expiry = new Date(start);
+  expiry.setDate(expiry.getDate() + days);
+
+  const { error } = await db
+    .from("memberships")
+    .insert({
+      user_id: userId,
+      plan: plan,
+      status: "active",
+      starts_at: start.toISOString(),
+      expires_at: expiry.toISOString()
+    });
+
+  if (error) {
+    alert("Membership error: " + error.message);
+    return;
+  }
+
+  alert(plan.toUpperCase() + " activated successfully!");
+
+  const panel = document.getElementById("aeroAdminPanel");
+  if (panel) panel.remove();
+
+  const { data } = await db.auth.getSession();
+  if (data.session) await loadAeroAdmin(data.session);
+}
+
 
 </script>
 
