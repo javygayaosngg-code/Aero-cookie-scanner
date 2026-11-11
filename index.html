@@ -55,6 +55,16 @@ footer{text-align:center;color:#788397;padding:30px}
 
       <button id="submitBtn" type="submit">LOGIN</button>
     </form>
+    
+<div style="text-align:center;margin-top:15px">
+  <button
+    type="button"
+    id="forgotPasswordBtn"
+    class="secondary">
+    FORGOT PASSWORD?
+  </button>
+</div>
+
 
     <div class="switch">
       <span id="switchText">Don't have an account?</span>
@@ -115,6 +125,56 @@ function showMessage(text, success=false) {
   message.style.color = success ? "#69e6ae" : "#ff9bad";
   message.textContent = text;
 }
+// AERO FORGOT PASSWORD
+document.getElementById("forgotPasswordBtn")
+  .addEventListener("click", async () => {
+
+    const email = document.getElementById("email").value.trim();
+
+    if (!email) {
+      showMessage("Please enter your Gmail first.");
+      return;
+    }
+
+    const { error } = await db.auth.resetPasswordForEmail(
+      email,
+      {
+        redirectTo: window.location.origin
+      }
+    );
+
+    if (error) {
+      showMessage(error.message);
+    } else {
+      showMessage(
+        "Password reset link sent! Please check your Gmail.",
+        true
+      );
+    }
+});
+
+// HANDLE PASSWORD RECOVERY
+db.auth.onAuthStateChange(async (event, session) => {
+  if (event === "PASSWORD_RECOVERY" && session) {
+    const newPassword = prompt("Enter your new password:");
+
+    if (!newPassword || newPassword.length < 8) {
+      alert("Password must be at least 8 characters.");
+      return;
+    }
+
+    const { error } = await db.auth.updateUser({
+      password: newPassword
+    });
+
+    if (error) {
+      alert(error.message);
+    } else {
+      alert("Your password has been successfully updated!");
+    }
+  }
+});
+
 
 function switchForm() {
   isRegister = !isRegister;
