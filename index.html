@@ -4,155 +4,227 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AERO Cookie Scanner</title>
+<title>AERO Cookie Security</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box}
-body{
- margin:0;
- font-family:Arial,sans-serif;
- background:#080d16;
- color:white;
-}
-header{
- padding:22px 18px;
- background:#101722;
- border-bottom:1px solid #292f3b;
- display:flex;
- justify-content:space-between;
- align-items:center;
-}
-.logo{font-size:21px;font-weight:bold}
-.logo span{color:#ff263f}
-nav a{
- color:#ddd;
- text-decoration:none;
- margin-left:14px;
- font-size:13px;
-}
-.hero{
- text-align:center;
- padding:65px 20px 35px;
- background:radial-gradient(ellipse at center,#30101c,#080d16 70%);
-}
-h1{font-size:36px;margin:0 0 15px}
-h1 span{color:#ff263f}
-.hero p{color:#aab3c2;line-height:1.6}
-.scanner{
- max-width:520px;
- margin:25px auto;
- padding:22px;
- background:#111a27;
- border:1px solid #343b4b;
- border-radius:16px;
-}
-input{
- width:100%;
- padding:15px;
- border-radius:9px;
- border:1px solid #414b5c;
- background:#080d16;
- color:white;
- font-size:15px;
-}
-button{
- width:100%;
- padding:15px;
- margin-top:12px;
- border:0;
- border-radius:9px;
- background:#f32340;
- color:white;
- font-weight:bold;
- font-size:16px;
-}
-.features{
- padding:25px 18px 55px;
- display:grid;
- grid-template-columns:1fr;
- gap:15px;
- max-width:850px;
- margin:auto;
-}
-.feature{
- padding:23px;
- background:#111a27;
- border:1px solid #252e3c;
- border-radius:13px;
-}
-.feature h3{margin-top:0}
-.feature p{color:#aab3c2;line-height:1.5}
-footer{
- text-align:center;
- padding:25px;
- color:#8993a3;
- border-top:1px solid #292f3b;
- font-size:13px;
-}
+body{margin:0;background:#090d17;color:white;font-family:Arial,sans-serif}
+header{background:#111827;padding:20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #30394a}
+.logo{font-size:25px;font-weight:bold;color:white}
+.logo span{color:#f52245}
+main{max-width:600px;margin:55px auto;padding:20px}
+h1{text-align:center;font-size:36px}
+h1 span{color:#f52245}
+.subtitle{text-align:center;color:#aab3c4;margin-bottom:35px}
+.card{background:#141e2d;padding:25px;border:1px solid #354052;border-radius:18px}
+input{width:100%;padding:15px;margin:9px 0;background:#090d17;border:1px solid #465166;border-radius:9px;color:white;font-size:16px}
+button{width:100%;padding:15px;border:0;border-radius:9px;background:#f52245;color:white;font-size:16px;font-weight:bold;margin-top:12px;cursor:pointer}
+button.secondary{background:#26364c}
+button:disabled{opacity:.5}
+.switch{text-align:center;color:#b9c2d1;margin-top:20px}
+.switch a{color:#ff405c;cursor:pointer}
+#message{padding:12px;border-radius:8px;margin-top:15px;display:none;overflow-wrap:anywhere}
+#dashboard{display:none}
+.info{background:#0b1421;padding:15px;border-radius:10px;margin-top:15px;overflow-wrap:anywhere}
+footer{text-align:center;color:#788397;padding:30px}
 </style>
 </head>
 <body>
 
 <header>
- <div class="logo">AERO <span>⚡</span></div>
- <nav>
-  <a href="#home">Home</a>
-  <a href="#scanner">Scanner</a>
-  <a href="#features">Features</a>
- </nav>
+  <div class="logo">AERO <span>⚡</span></div>
+  <div>COOKIE SECURITY</div>
 </header>
 
-<section class="hero" id="home">
- <h1>Cookie <span>Scanner ⚡</span></h1>
- <p>Powerful. Accurate. Secure.<br>
- Website Cookie Security Scanner</p>
+<main>
+  <h1>AERO <span>COOKIE SCANNER</span> ⚡</h1>
+  <p class="subtitle">Powerful. Accurate. Secure.</p>
 
- <div class="scanner" id="scanner">
-  <h2>Website Scanner</h2>
-  <p>Enter your website URL below.</p>
-  <input id="website" type="url"
-   placeholder="https://example.com">
-  <button onclick="scan()">START SCANNING</button>
-  <p id="message"></p>
- </div>
-</section>
+  <section class="card" id="auth">
+    <h2 id="formTitle">Welcome Back</h2>
+    <p style="color:#aab3c4" id="formSubtitle">Login to your AERO account.</p>
 
-<section class="features" id="features">
- <div class="feature">
-  <h3>🛡️ Secure & Private</h3>
-  <p>Security-focused cookie analysis.</p>
- </div>
- <div class="feature">
-  <h3>📊 Accurate Results</h3>
-  <p>Review cookie security attributes.</p>
- </div>
- <div class="feature">
-  <h3>⚡ Powerful Scanner</h3>
-  <p>Designed for website security checks.</p>
- </div>
-</section>
+    <form id="authForm">
+      <div id="nameField" style="display:none">
+        <input id="displayName" type="text" placeholder="Your Name" autocomplete="name">
+      </div>
 
-<footer>
- © 2026 AERO Cookie Scanner.
- All rights reserved.
-</footer>
+      <input id="email" type="email" placeholder="Email Address" required autocomplete="email">
+
+      <input id="password" type="password" placeholder="Password (minimum 8 characters)" required minlength="8" autocomplete="current-password">
+
+      <button id="submitBtn" type="submit">LOGIN</button>
+    </form>
+
+    <div class="switch">
+      <span id="switchText">Don't have an account?</span>
+      <a id="switchBtn">Register</a>
+    </div>
+
+    <div id="message" role="status"></div>
+  </section>
+
+  <section class="card" id="dashboard">
+    <h2>Welcome to AERO!</h2>
+    <p style="color:#aab3c4">You are successfully logged in.</p>
+
+    <div class="info">
+      <p>ACCOUNT EMAIL</p>
+      <strong id="userEmail"></strong>
+    </div>
+
+    <div class="info">
+      <p>MEMBERSHIP</p>
+      <strong>FREE MEMBER</strong>
+    </div>
+
+    <div class="info">
+      <p>ACCOUNT STATUS</p>
+      <strong style="color:#24d18b">ACTIVE SESSION</strong>
+    </div>
+
+    <h3>Security Scanner</h3>
+    <p style="color:#aab3c4">
+      Authorized website cookie security analysis is coming next.
+    </p>
+
+    <button class="secondary" id="logoutBtn">LOGOUT</button>
+  </section>
+</main>
+
+<footer>© 2026 AERO COOKIE SCANNER</footer>
 
 <script>
-function scan(){
- const url=document.getElementById("website").value;
- const msg=document.getElementById("message");
+const SUPABASE_URL = "https://yabyqdlijiezfufmptsg.supabase.co";
+const SUPABASE_KEY = "sb_publishable_HqFJHaG-aUYkGIjqxwPQ4w_XRxsTaE_";
 
- try{
-  const parsed=new URL(url);
-  if(!["http:","https:"].includes(parsed.protocol)){
-   throw new Error();
-  }
-  msg.textContent="URL accepted. Scanner engine setup is the next step.";
-  msg.style.color="#ff5268";
- }catch(e){
-  msg.textContent="Please enter a valid website URL.";
-  msg.style.color="#ff5268";
- }
+const db = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+let isRegister = false;
+
+const authSection = document.getElementById("auth");
+const dashboard = document.getElementById("dashboard");
+const message = document.getElementById("message");
+
+function showMessage(text, success=false) {
+  message.style.display = "block";
+  message.style.background = success ? "#123c30" : "#481d2b";
+  message.style.color = success ? "#69e6ae" : "#ff9bad";
+  message.textContent = text;
 }
+
+function switchForm() {
+  isRegister = !isRegister;
+
+  document.getElementById("formTitle").textContent =
+    isRegister ? "Create Account" : "Welcome Back";
+
+  document.getElementById("formSubtitle").textContent =
+    isRegister ? "Register your AERO account." : "Login to your AERO account.";
+
+  document.getElementById("nameField").style.display =
+    isRegister ? "block" : "none";
+
+  document.getElementById("displayName").required = isRegister;
+
+  document.getElementById("submitBtn").textContent =
+    isRegister ? "CREATE ACCOUNT" : "LOGIN";
+
+  document.getElementById("switchText").textContent =
+    isRegister ? "Already have an account?" : "Don't have an account?";
+
+  document.getElementById("switchBtn").textContent =
+    isRegister ? "Login" : "Register";
+
+  document.getElementById("password").autocomplete =
+    isRegister ? "new-password" : "current-password";
+
+  message.style.display = "none";
+}
+
+document.getElementById("switchBtn").addEventListener("click", switchForm);
+
+document.getElementById("authForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const btn = document.getElementById("submitBtn");
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const displayName = document.getElementById("displayName").value.trim();
+
+  btn.disabled = true;
+  btn.textContent = "PLEASE WAIT...";
+
+  try {
+    if (isRegister) {
+      const { data, error } = await db.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { display_name: displayName }
+        }
+      });
+
+      if (error) throw error;
+
+      if (data.session) {
+        showMessage("Account created successfully!", true);
+      } else {
+        showMessage(
+          "Registration successful! Please check your email and confirm your account before logging in.",
+          true
+        );
+      }
+    } else {
+      const { error } = await db.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) throw error;
+    }
+  } catch (error) {
+    showMessage(error.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = isRegister ? "CREATE ACCOUNT" : "LOGIN";
+  }
+});
+
+async function updatePage(session) {
+  if (session) {
+    authSection.style.display = "none";
+    dashboard.style.display = "block";
+    document.getElementById("userEmail").textContent =
+      session.user.email;
+  } else {
+    authSection.style.display = "block";
+    dashboard.style.display = "none";
+  }
+}
+
+db.auth.onAuthStateChange((event, session) => {
+  updatePage(session);
+});
+
+document.getElementById("logoutBtn").addEventListener("click", async () => {
+  const { error } = await db.auth.signOut();
+
+  if (error) {
+    alert(error.message);
+  }
+});
+
+db.auth.getSession().then(({data, error}) => {
+  if (error) {
+    showMessage(error.message);
+    return;
+  }
+  updatePage(data.session);
+});
 </script>
 
 </body>
